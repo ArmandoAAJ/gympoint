@@ -1,0 +1,46 @@
+import React from 'react'
+import { Route, Redirect } from 'react-router-dom'
+import PropTypes from 'prop-types'
+
+import { store } from '../sagaReducer'
+
+import DefaultLayout from '../pages/_layouts/default'
+import SignIn from '../pages/SignIn/index'
+
+export default function RouteWrapper({
+  component: Component,
+  isPrivate,
+  ...rest
+}) {
+  const signed = store.getState().autenticacao.signed;
+
+  if (!signed && isPrivate) {
+    return <Redirect to="/" />
+  }
+
+  if (signed && !isPrivate) {
+    return <Redirect to="/dashboard" />
+  }
+
+  const Layout = signed ? DefaultLayout : SignIn
+
+  return (
+    <Route
+      {...rest}
+      render={props => (
+        <Layout>
+          <Component {...props}/>
+        </Layout>
+      )}
+    />
+  )
+}
+
+RouteWrapper.propTypes = {
+  isPrivate: PropTypes.bool,
+  component: PropTypes.oneOfType([PropTypes.element, PropTypes.func]).isRequired
+};
+
+RouteWrapper.defaultProps = {
+  isPrivate: false,
+};
