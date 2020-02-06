@@ -1,33 +1,32 @@
 import styled from 'styled-components';
 
-export const Container = styled.table`
-  padding: 30px 20px;
+export const Container = styled.div`
 
-td {
-  padding: 10px 0px;
-  border-bottom: 1px solid #eee;
+td, th {
+  padding: 10px 10px 5px 10px;
+}
+
+td{
+  border-bottom: 2px solid #eee;
+}
+
+th{
+  width: 1000px;
   text-align: left;
 }
 
- th  {
-  width: 500px;
-  padding-bottom: 10px;
-  text-align: left;
-}
-
-td .blue{
+td .blue {
   color: blue;
   font-weight: bold;
 }
 
-td .red{
+td .red {
   color: red;
   font-weight: bold;
   margin-left: 10px;
 }
 
 `;
-
 
 
 

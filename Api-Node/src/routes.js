@@ -37,6 +37,7 @@ routes.delete('/plans/:id', authMiddleware, PlanController.delete);
 // CADASTRO/REGISTRATION
 routes.post('/registrations', authMiddleware, RegistrationController.store);
 routes.get('/registrations', authMiddleware, RegistrationController.index);
+routes.get('/registrations/:id', authMiddleware, RegistrationController.show);
 routes.put('/registrations/:id', authMiddleware, RegistrationController.update);
 routes.delete(
   '/registrations/:id',

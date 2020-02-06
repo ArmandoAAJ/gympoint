@@ -4,12 +4,15 @@ module.exports = {
     es6: true,
   },
   extends: [
-    "airbnb", "prettier", "prettier/react",
+    'airbnb',
+    'prettier',
+    'prettier/react'
   ],
   globals: {
     Atomics: 'readonly',
     SharedArrayBuffer: 'readonly',
   },
+  parser: 'babel-eslint',
   parserOptions: {
     ecmaFeatures: {
       jsx: true,
@@ -18,7 +21,11 @@ module.exports = {
     sourceType: 'module',
   },
   plugins: [
-    "react", "jsx-a11y", "import", "react-hooks", "prettier"
+    "react",
+    "jsx-a11y",
+    "import",
+    "react-hooks",
+    "prettier"
   ],
   rules: {
     "prettier/prettier": "error",
@@ -30,11 +37,19 @@ module.exports = {
     "react-native/no-raw-text": "off",
     "no-param-reassign": "off",
     "no-underscore-dangle": "off",
-    "react/jsx-props-no-spreading": "off",
-    "jsx-a11y/label-has-associated-control": "off",
     camelcase: "off",
     "no-console": ["error", { allow: ["tron"] }],
     "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "warn"
+    "react-hooks/exhaustive-deps": "warn",
+    'react/jsx-props-no-spreading': 'off',
+    'jsx-a11y/control-has-associated-label': 'off',
+    "no-alert": "off"
+  },
+  settings: {
+    "import/resolver": {
+      "babel-plugin-root-import": {
+        rootPathSuffix: "src"
+      },
+    },
   },
 };

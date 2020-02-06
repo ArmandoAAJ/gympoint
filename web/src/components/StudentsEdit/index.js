@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react'
+import { useDispatch } from 'react-redux'
 import { Link, useParams } from 'react-router-dom'
 import { Form, Input } from '@rocketseat/unform'
 import * as Yup from 'yup'
 
 import api from '../../services/api'
 
-import { toast } from 'react-toastify'
 import { MdKeyboardBackspace, MdSave } from "react-icons/md"
 import { Container, Content, StudentsContent } from './styles'
+
+import { updateInRequest } from '../../sagaReducer/modules/student/action'
 
 const schema = Yup.object().shape({
   name: Yup.string().required('O nome é obrigatório'),
@@ -28,6 +30,9 @@ const schema = Yup.object().shape({
 
 export default function StudentsEdit() {
   const [students, setStudents] = useState([])
+
+  const dispatch = useDispatch()
+
   const { id } = useParams()
 
   useEffect(() => {
@@ -38,18 +43,13 @@ export default function StudentsEdit() {
     loadStudent()
   }, [id])
 
-  async function handleSubmitEditStudent(data) {
-    try {
-      await api.put(`students/${id}`, data)
-      toast.success('Estudante atualizado com sucesso')
-    } catch (error) {
-      toast.error('Erro ao atualizar o Estudante, verifique os dados')
-    }
+  function handleSubmit({ ...data }) {
+    dispatch(updateInRequest({ ...data, id }))
   }
 
   return (
     <Container>
-      <Form initialData={students} onSubmit={handleSubmitEditStudent} schema={schema}>
+      <Form initialData={students} onSubmit={handleSubmit} schema={schema}>
         <Content>
           <nav>
             <h2>Gerenciando Alunos</h2>

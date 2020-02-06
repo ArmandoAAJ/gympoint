@@ -59,21 +59,34 @@ export default function Plans() {
         </div>
       </Content>
       <Table>
-        <tbody>
-          <tr >
-            <th>Nome</th>
-            <th>Duração</th>
-            <th>Peço</th>
+        <thead>
+          <tr>
+            <th>NOME</th>
+            <th>DURAÇÃO</th>
+            <th>VALOR</th>
             <th></th>
           </tr>
+        </thead>
+        <tbody>
           {plans.map(plan => (
-            <tr key={plan.id}>
+            <tr key={plan.id} >
               <td>{plan.title}</td>
-              <td>{plan.duration}</td>
-              <td>{plan.price}</td>
+              <td>{plan.duration} Mês</td>
+              <td>{plan.price},00</td>
               <td>
-                <Link to={`planEdit/${plan.id}`} className="blue" >Editar</Link>
-                <Link className="red" onClick={() => confirmPlanDelete(plan.id)} > Excluir</Link></td>
+                <Link
+                  to={{
+                    pathname: `/planEdit/${plan.id}`,
+                    state: {
+                      plan: plan
+                    }
+                  }}
+                  className="blue"
+                >
+                  <span>Editar</span>
+                </Link>
+                <Link className="red" onClick={() => confirmPlanDelete(plan.id)} > Excluir</Link>
+              </td>
             </tr>
           ))}
         </tbody>

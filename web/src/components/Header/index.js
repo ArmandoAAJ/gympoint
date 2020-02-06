@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { loginOut } from '../../sagaReducer/modules/autenticacao/action'
 
@@ -20,17 +20,17 @@ export default function Header() {
       <Content>
         <nav>
           <img src={headerLogo} alt="Logo Header" />
-          <Link to={`/dashboard`} className="first" >ALUNOS</Link>
-          <Link to="/plans" >PLANOS</Link>
-          <Link to={`/register`} >MATRÍCULAS</Link>
-          <Link to={`/dashboard`} >PEDIDOS DE AUXÍLIO </Link>
+          <NavLink to={`/dashboard`} activeClassName="nav-color" >ALUNOS</NavLink>
+          <NavLink to={`/plans`} activeClassName="nav-color" >PLANOS</NavLink>
+          <NavLink to={`/register`} activeClassName="nav-color" >MATRÍCULAS</NavLink>
+          <NavLink to={`/pedido`} activeClassName="nav-color" >PEDIDOS DE AUXÍLIO </NavLink>
         </nav>
 
         <aside>
           <Profile>
             <div>
               <strong>{profile.name}</strong>
-              <Link to="/" onClick={handleLoginOut}>Sair do Sistema</Link>
+              <NavLink to="/" onClick={handleLoginOut}>Sair do Sistema</NavLink>
             </div>
           </Profile>
         </aside>

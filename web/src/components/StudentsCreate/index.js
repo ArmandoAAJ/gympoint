@@ -2,11 +2,12 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { Form, Input } from '@rocketseat/unform'
 import * as Yup from 'yup'
-import api from '../../services/api'
+import { useDispatch } from 'react-redux'
 
 import { MdKeyboardBackspace, MdSave } from "react-icons/md"
-import { toast } from 'react-toastify'
 import { Container, Content, StudentsContent } from './styles'
+
+import { storeInRequest } from '../../sagaReducer/modules/student/action'
 
 const schema = Yup.object().shape({
   name: Yup.string().required('O nome é obrigatório'),
@@ -27,20 +28,15 @@ const schema = Yup.object().shape({
 
 export default function StudentsCreate() {
 
-  async function handleSubmitCreateStudent(data) {
-    try {
-      await api.post('students', data)
-      toast.success('Estudante cadastrado com sucesso')
+  const dispatch = useDispatch()
 
-    } catch (error) {
-      toast.error('Erro ao cadastrar o estudante verifique os dados')
-    }
-
+  function handleSubmit(data) {
+    dispatch(storeInRequest(data))
   }
 
   return (
     <Container>
-      <Form onSubmit={handleSubmitCreateStudent} schema={schema} >
+      <Form onSubmit={handleSubmit} schema={schema} >
         <Content>
           <nav>
             <h2>Gerenciando Alunos</h2>
@@ -57,13 +53,13 @@ export default function StudentsCreate() {
           <Input name="email" type="email" />
           <div>
             <label>Idade
-            <Input name="age"/>
+            <Input name="age" />
             </label>
             <label>Peso
-            <Input name="weight"/>
+            <Input name="weight" />
             </label>
             <label>Altura
-            <Input name="height"/>
+            <Input name="height" />
             </label>
           </div>
         </StudentsContent>

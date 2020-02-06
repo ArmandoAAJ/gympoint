@@ -1,13 +1,13 @@
 import styled from 'styled-components';
 
-export const Container=styled.div`
+export const Container = styled.div`
 max-width: 1000px;
 margin: 50px auto;
 border: 2px solid #eee;
 padding: 20px;
 `;
 
-export const Content=styled.div`
+export const Content = styled.div`
 min-width: 600px;
 display:flex;
 justify-content: space-between;
@@ -43,24 +43,27 @@ input {
 }
 
 `;
-export const Table=styled.table`
-min-width: 600px;
-margin-top: 15px;
-height: 300px;
-border: 1px solid #eee;
-border-radius: 5px;
-background-color: #fff;
-padding: 30px 20px;
 
-td {
-  padding: 10px 0px;
-  border-bottom: 1px solid #eee;
-  text-align: left;
+export const Table = styled.div`
+  width: 100%;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  height: 300px;
+  margin-top: 15px;
+  border: 1px solid #eee;
+  border-radius: 5px;
+  background-color: #fff;
+  padding: 20px 20px;
+
+td, th {
+  padding: 10px 10px 5px 10px;
 }
 
-th {
-  width: 500px;
-  padding-bottom: 10px;
+td{
+  border-bottom: 2px solid #eee;
+}
+
+th{
+  width: 1000px;
   text-align: left;
 }
 
@@ -76,3 +79,4 @@ td .red {
 }
 
 `;
+

@@ -1,13 +1,13 @@
 import styled from 'styled-components';
 
-export const Container=styled.div`
+export const Container = styled.div`
 max-width: 1000px;
 margin: 50px auto;
 border: 2px solid #eee;
 padding: 20px;
 `;
 
-export const Content=styled.div`
+export const Content = styled.div`
 min-width: 600px;
 display:flex;
 justify-content: space-between;
@@ -42,11 +42,13 @@ input {
 }
 
 `;
-export const ContentTable=styled.div`
-min-width: 600px;
-margin-top: 15px;
-height: 300px;
-border: 1px solid #eee;
-border-radius: 5px;
-background-color: #fff;
+export const ContentTable = styled.div`
+  width: 100%;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  height: 300px;
+  margin-top: 15px;
+  border: 1px solid #eee;
+  border-radius: 5px;
+  background-color: #fff;
+  padding: 20px 20px;
 `;

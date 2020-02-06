@@ -12,6 +12,7 @@ import PlansEdit from '../components/PlansEdit'
 import PlansCreate from '../components/PlansCreate'
 
 import Register from '../components/Register'
+import RegisterEdit from '../components/RegisterEdit'
 
 
 export default function Routes() {
@@ -27,6 +28,7 @@ export default function Routes() {
       <Route path="/planCreate" component={PlansCreate} isPrivate />
 
       <Route path="/register" component={Register} isPrivate />
+      <Route path="/registerEdit/:id" component={RegisterEdit} isPrivate />
 
 
 

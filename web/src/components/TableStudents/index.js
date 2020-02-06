@@ -9,7 +9,6 @@ import api from '../../services/api'
 import { Container } from './styles'
 
 export default function TableStudents() {
-
   const [students, setStudents] = useState([])
 
   useEffect(() => {
@@ -50,20 +49,27 @@ export default function TableStudents() {
 
   return (
     <Container>
-      <tbody>
+      <thead>
         <tr>
-          <th>Nome</th>
-          <th>E-mail</th>
-          <th>Idade</th>
+          <th>NOME</th>
+          <th>E-MAIL</th>
+          <th>IDADE</th>
           <th></th>
         </tr>
+      </thead>
+      <tbody>
         {students.map(student => (
-          <tr key={student.id}>
+          <tr key={student.id} >
             <td>{student.name}</td>
             <td>{student.email}</td>
             <td>{student.age}</td>
             <td>
-              <Link className="blue" to={`students/${student.id}`}>Editar</Link>
+              <Link
+                to={`students/${student.id}`}
+                className="blue"
+              >
+                <span>Editar</span>
+              </Link>
               <Link className="red" onClick={() => confirmStudentDelete(student.id)} > Excluir</Link>
             </td>
           </tr>

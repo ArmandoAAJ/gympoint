@@ -1,40 +1,40 @@
 import produce from 'immer'
 
 const INITIAL_STATE = {
-  plan: [],
+  student: [],
   loading: false,
 };
 
-export default function plan(state = INITIAL_STATE, action) {
+export default function student(state = INITIAL_STATE, action) {
   switch (action.type) {
-    case '@plan/STORE_REQUEST':
+    case '@student/STORE_REQUEST':
       return produce(state, draft => {
         draft.loading = true;
       })
 
-    case '@plan/STORE_SUCCESS':
+    case '@student/STORE_SUCCESS':
       return produce(state, draft => {
         draft.plan = action.payload;
         draft.loading = false;
       })
 
-    case '@plan/STORE_FAILURE':
+    case '@student/STORE_FAILURE':
       return produce(state, draft => {
         draft.loading = true;
       })
 
-    case '@plan/UPDATE_REQUEST':
+    case '@student/UPDATE_REQUEST':
       return produce(state, draft => {
         draft.loading = true;
       })
 
-    case '@plan/UPDATE_SUCCESS':
+    case '@student/UPDATE_SUCCESS':
       return produce(state, draft => {
         draft.plan = action.payload;
         draft.loading = false;
       })
 
-    case '@plan/UPDATE_FAILURE':
+    case '@student/UPDATE_FAILURE':
       return produce(state, draft => {
         draft.loading = true;
       })

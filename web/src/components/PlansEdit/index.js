@@ -4,8 +4,6 @@ import { Link, useParams } from 'react-router-dom'
 import { Form, Input } from '@rocketseat/unform'
 import * as Yup from 'yup'
 
-import api from '../../services/api'
-
 import { MdKeyboardBackspace, MdSave } from "react-icons/md"
 import { Container, Content, PlanContent } from './styles'
 
@@ -24,22 +22,14 @@ const schema = Yup.object().shape({
     .typeError('Preço Final'),
 })
 
-export default function StudentsEdit() {
+export default function StudentsEdit({ location }) {
+  const state = ((location.state) ? location.state.plan : null)
 
-  const [plans, setPlans] = useState([])
+  const [plans, setPlans] = useState(state)
+
   const dispatch = useDispatch();
 
   const { id } = useParams()
-
-  useEffect(() => {
-    async function loadPlans() {
-      const response = await api.get(`plans/${id}`)
-      setPlans(response.data)
-    }
-    loadPlans()
-  }, [id])
-
-
 
   function handleSubmit({ ...data }) {
     dispatch(updateInRequest({ ...data, id }));
@@ -68,7 +58,7 @@ export default function StudentsEdit() {
               <Input name="price" />
             </label>
             <label>Preço Total
-              <Input name="finalPrice" className="dark" readOnly="true" />
+              <Input name="totals" className="dark" readOnly="true" />
             </label>
           </div>
         </PlanContent>

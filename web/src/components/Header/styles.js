@@ -23,16 +23,17 @@ export const Content = styled.div`
       border-right: 1px solid #eee;
     }
 
-    a {
+    a  {
       padding-right: 20px;
-      font-size: 15px;
+      font-size: 13px;
       color:#766;
       font-weight: bold;
     }
 
-    .first{
-      color: #000;
+    .nav-color {
+      color: #EE4D64;
     }
+
   }
     aside {
       display: flex;

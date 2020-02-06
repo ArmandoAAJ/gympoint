@@ -23,13 +23,17 @@ class PlanController {
       return res.status(400).json({ error: 'Plano já cadastrado' });
     }
 
-    const { id, title, duration, price } = await Plan.create(req.body);
-    return res.json({
-      id,
-      title,
-      duration,
-      price,
+    const {title, duration, price} = req.body
+    const totals = (price * duration)
+
+    const plan = await Plan.create({
+      title, 
+      duration, 
+      price, 
+      totals
     });
+
+    return res.json(plan);
   }
 
   async update(req, res) {
@@ -75,18 +79,16 @@ class PlanController {
   }
 
   async index(req, res) {
-
     try {
-      const plans = await Plan.findAll()
+      const plan = await Plan.findAll()
 
-      return res.json(plans)
+      return res.json(plan)
 
     } catch (error) {
 
       return res.status(400).json({ error: 'Erro na chamada' });
     }
   }
-
   async show(req, res) {
     try {
       const { id } = req.params
@@ -126,7 +128,7 @@ class PlanController {
       plans
     })
   }
-  
+
 }
 
 export default new PlanController();

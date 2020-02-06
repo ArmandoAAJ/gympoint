@@ -1,185 +1,175 @@
 import * as Yup from 'yup';
-import { parseISO, isBefore, addMonths, format } from 'date-fns';
-import pt from 'date-fns/locale/pt';
-import '../../config/mail';
-import Registration from '../models/Registration';
-import Student from '../models/Student';
+import { parseISO, addMonths } from 'date-fns';
+
 import Plan from '../models/Plan';
-import RegisterMail from '../jobs/RegisterMail';
-import Queue from '../../lib/Queue';
+import Student from '../models/Student';
+
+import Registration from '../models/Registration';
+
 
 class RegistrationController {
   async store(req, res) {
     const schema = Yup.object().shape({
+      student_id: Yup.number()
+        .integer()
+        .required(),
+      plan_id: Yup.number()
+        .integer()
+        .positive()
+        .required(),
       start_date: Yup.date().required(),
-      plan_id: Yup.number().required(),
-      student_id: Yup.number().required(),
     });
 
-    if (!(await schema.isValid(req.body))) {
-      return res.status(400).json({ error: 'Validaçaão Falhou' });
+    await schema.validate(req.body).catch(err => {
+      return res.status(400).json({ error: err.message });
+    });
+
+    // Verificar se o aluno existe
+
+    const checkStudentExists = await Student.findOne({
+      where: { id: req.body.student_id },
+    });
+
+    if (!checkStudentExists) {
+      return res.status(400).json({ error: 'Student not exists.' });
     }
 
-    const { start_date, plan_id, student_id } = req.body;
-    // Busca um Estudante/Aluno com o id informado para cadastro que tenha uma inscrição Nula
-    // Ou seja se isso for verdade o estudante já tem uma matricula em aberto
-    const registration = await Registration.findOne({
-      where: { student_id, canceled_at: null },
+    // Verificar se o plano existe
+
+    const plan = await Plan.findOne({
+      where: { id: req.body.plan_id },
     });
-    
-    if (registration) {
-      return res
-        .status(400)
-        .json({ error: 'Estudante/Aluno possui matricula em aberto' });
-    }
-    // Verifica se o plano existe
-    const plan = await Plan.findByPk(plan_id);
+
     if (!plan) {
-      return res.status(400).json({ error: 'Plano não encontrado' });
+      return res.status(400).json({ error: 'Plan not exists.' });
     }
-    // Verifica se o Estudante/Aluno existe
-    const student = await Student.findByPk(student_id);
-    if (!student) {
-      return res.status(400).json({ error: 'Estudante/Aluno não encontrado' });
-    }
-    // Verifica se a data escolhida pelo Estudante/Aluno está anterior a data atual
-    const start = parseISO(start_date);
-    if (isBefore(start, new Date())) {
-      return res.status(400).json({ error: 'Data desatualizada' });
-    }
-    // Calcula a data final com base no plano escolhido(1 mes, 3 meses, 6 meses)
-    const end = addMonths(start, plan.duration);
-    // Calcula o valor conforme o numero de meses escolhido
-    const price = plan.price * plan.duration;
 
-    const { id } = await Registration.create({
-      user_id: req.userId,
-      student_id: student.id,
-      plan_id: plan.id,
-      start_date: start,
-      end_date: end,
-      final_price: price,
-    });
-    const formatStart = format(start, "'Dia' dd 'de' MMMM yyyy", {
-      locale: pt,
-    });
-    const formatEnd = format(end, "'Dia' dd 'de' MMMM yyyy", {
-      locale: pt,
-    });
-    // Envia esses dados para a fila que vai processar os emails separadamente
-    await Queue.add(RegisterMail.key, {
-      student,
-      plan,
-      formatStart,
-      formatEnd,
-      price,
-    });
+    const planPrice = plan.price;
+    const planDuration = plan.duration;
 
-    return res.json({
-      id,
+    const { student_id, plan_id } = req.body;
+
+    const startDate = parseISO(req.body.start_date);
+    const endDate = addMonths(startDate, planDuration);
+
+    const registration = await Registration.create({
       student_id,
       plan_id,
-      formatStart,
-      formatEnd,
-      price,
+      start_date: startDate,
+      end_date: endDate,
+      price: planPrice * planDuration,
     });
+
+    return res.json(registration);
   }
 
   async index(req, res) {
-    // Busca os registros dos Alunos/Estudantes ordena pela data de Criação e retorna alguns dados
-    // de cada Model que tem ligação com a tabela Registration
-    const register = await Registration.findAll({
-      where: { user_id: req.userId, canceled_at: null },
-      order: ['start_date'],
-      attributes: ['id', 'start_date', 'end_date', 'final_price'],
+    const registrations = await Registration.findAll({
+      attributes: ['id', 'start_date', 'end_date', 'price', 'active'],
       include: [
         {
-          model: Plan,
-          attributes: ['id', 'title', 'duration', 'price'],
+          model: Student,
+          as: 'student',
+          attributes: ['name'],
         },
         {
-          model: Student,
-          attributes: ['id', 'name', 'email'],
+          model: Plan,
+          as: 'plan',
+          attributes: ['title', 'duration', 'price'],
         },
       ],
     });
-    return res.json(register);
+
+    if (!registrations) {
+      return res.status(400).json({ error: 'Registrations not found.' });
+    }
+    return res.json(registrations);
+  }
+  async show(req, res) {
+    const { id } = req.params
+
+    const registrations = await Registration.findOne({
+      where: { id },
+      attributes: ['id', 'start_date', 'end_date', 'price', 'active'],
+      include: [
+        {
+          model: Student,
+          as: 'student',
+          attributes: ['name'],
+        },
+        {
+          model: Plan,
+          as: 'plan',
+          attributes: ['title', 'duration', 'price'],
+        },
+      ],
+    });
+
+    if (!registrations) {
+      return res.status(400).json({ error: 'Registrations not found.' });
+    }
+    return res.json(registrations);
   }
 
   async update(req, res) {
     const schema = Yup.object().shape({
-      plan_id: Yup.number(),
-      start_date: Yup.date(),
+      plan_id: Yup.number()
+        .integer()
+        .positive()
+        .required(),
+      start_date: Yup.date().required(),
     });
-    if (!(await schema.isValid(req.body))) {
-      return res.status(400).json({
-        error: 'Validação Falhou',
-      });
-    }
-    const { plan_id, start_date } = req.body;
 
-    const student = await Student.findByPk(req.params.id);
-    if (!student) {
-      return res.status(400).json({ error: 'Aluno/Estudante nao econtrado' });
+    await schema.validate(req.body).catch(err => {
+      return res.status(400).json({ error: err.message });
+    });
+
+    const checkRegistration = await Registration.findOne({
+      where: { id: req.params.id },
+    });
+
+    if (!checkRegistration) {
+      return res.status(400).json({ error: 'Registration not exists.' });
     }
-    const plan = await Plan.findByPk(plan_id);
+
+    const plan = await Plan.findOne({
+      where: { id: req.body.plan_id },
+    });
+
     if (!plan) {
-      return res.status(400).json({ error: 'Plano nao econtrado' });
-    }
-    const titlePlan = plan.title;
-
-    // Verifica se a data escolhida pelo Estudante/Aluno está anterior a data atual
-    const start = parseISO(start_date);
-    if (isBefore(start, new Date())) {
-      return res.status(400).json({ error: 'Data desatualizada' });
-    }
-    // Calcula a data final com base no plano escolhido(1 mes, 3 meses, 6 meses)
-    const end = addMonths(start, plan.duration);
-    // Calcula o valor conforme o numero de meses escolhido
-    const price = plan.price * plan.duration;
-
-    const register = await Registration.findOne({
-      where: { student_id: student.id, canceled_at: null },
-    });
-    if (!register) {
-      return res.status(400).json({
-        error: 'Estudante/Aluno não possue cadastro para ser Atualizado',
-      });
+      return res.status(400).json({ error: 'Plan not exists.' });
     }
 
-    const { id, student_id } = await register.update({
-      user_id: req.userId,
-      plan_id: plan.id,
-      start_date: start,
-      end_date: end,
-      final_price: price,
+    const planPrice = plan.price;
+    const planDuration = plan.duration;
+
+    const { plan_id } = req.body;
+
+    const startDate = parseISO(req.body.start_date);
+    const endDate = addMonths(startDate, planDuration);
+
+    const registration = await checkRegistration.update({
+      plan_id,
+      start_date: startDate,
+      end_date: endDate,
+      price: planPrice * planDuration,
     });
 
-    return res.json({ id, student_id, titlePlan, start, end, price });
+    return res.json(registration);
   }
 
   async delete(req, res) {
-    const student = req.params;
-    if (!student) {
-      return res.status(400).json({ error: 'Estudante/Aluno não existe' });
-    }
-
-    const register = await Registration.findOne({
-      where: { student_id: student.id, canceled_at: null },
+    const registration = await Registration.findOne({
+      where: { id: req.params.id },
     });
 
-    if (!register) {
-      return res.status(400).json({
-        error: 'Estudante/Aluno não possue cadastro para ser cancelado',
-      });
+    if (!registration) {
+      return res.status(400).json({ error: 'Registration not exists.' });
     }
 
-    register.canceled_at = new Date();
-    await register.save({
-      user_id: req.userId,
-    });
+    await registration.destroy({ where: { id: req.params.id } });
 
-    return res.json(register);
+    return res.json({ message: 'Record deleted successfully.' });
   }
 }
 

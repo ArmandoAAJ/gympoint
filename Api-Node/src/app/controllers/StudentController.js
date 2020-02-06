@@ -1,5 +1,6 @@
-import * as Yup from 'yup';
-import Student from '../models/Student';
+import * as Yup from 'yup'
+import { Op } from 'sequelize'
+import Student from '../models/Student'
 
 class StudentController {
 
@@ -96,9 +97,25 @@ class StudentController {
   }
 
   async index(req, res) {
-    const students = await Student.findAll({
-    });
-    return res.json(students);
+    const { search, page = 1 } = req.query;
+
+    const student = search
+      ? await Student.findAll({
+        where: { name: { [Op.iLike]: `%${search}%` } },
+        order: ['name'],
+        limit: 10,
+        offset: (page - 1) * 10,
+      })
+      : await Student.findAll({
+        order: ['name'],
+        limit: 10,
+        offset: (page - 1) * 10,
+      });
+
+    if (student.length <= 0) {
+      return res.json({ error: 'Não encontramos nada com sua busca!' })
+    }
+    return res.json(student)
   }
 
   async show(req, res) {

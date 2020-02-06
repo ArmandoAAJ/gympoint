@@ -1,10 +1,10 @@
 import styled from 'styled-components';
-export const Container=styled.div` max-width: 1000px;
+export const Container = styled.div` max-width: 1000px;
 margin: 50px auto;
 border: 2px solid #eee;
 padding: 20px;
 `;
-export const Content=styled.div` min-width: 600px;
+export const Content = styled.div` min-width: 600px;
 display:flex;
 justify-content: space-between;
 flex-direction: row;
@@ -41,9 +41,9 @@ input {
   border-color: rgba(0, 0, 0, 0.3);
   padding: 4px;
 }
-
 `;
-export const PlanContent=styled.div`
+
+export const RegisterContent = styled.div`
 min-width: 600px;
 display: flex;
 flex-direction: column;
@@ -54,6 +54,16 @@ border-radius: 4px;
 background: white;
 padding: 30px;
 input {
+  margin-top: 5px;
+  padding: 5px;
+  margin-bottom: 20px;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  height: 40px;
+  width: 100%;
+}
+
+select{
   margin-top: 5px;
   padding: 5px;
   margin-bottom: 20px;
@@ -83,6 +93,7 @@ div {
   .dark {
     background: #eee;
   }
-}
+  }
 
 `;
+

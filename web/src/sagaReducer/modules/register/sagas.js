@@ -20,15 +20,16 @@ export function* store({ payload }) {
 }
 
 export function* update({ payload }) {
+  const plan_id = payload.planId
+  const start_date = payload.startDate
   try {
-    const { title, duration, price } = payload;
-    const response = yield call(api.put, `plans/${payload.id}`, {
-      title, duration, price
+    const response = yield call(api.put, `registrations/${payload.id}`, {
+      plan_id, start_date
     })
     if (response) {
       yield put(updateInSuccess(payload))
       toast.success('Registro salvo!')
-      history.push('/plans')
+      history.push('/register')
     }
   } catch (err) {
     toast.error(err.response.data.error);
@@ -37,6 +38,6 @@ export function* update({ payload }) {
 }
 
 export default all([
-  takeLatest('@plan/STORE_IN_REQUEST', store),
-  takeLatest('@plan/UPDATE_IN_REQUEST', update),
+  takeLatest('@register/STORE_IN_REQUEST', store),
+  takeLatest('@register/UPDATE_IN_REQUEST', update),
 ]);

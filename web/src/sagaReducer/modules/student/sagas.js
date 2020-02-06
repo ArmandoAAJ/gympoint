@@ -7,11 +7,11 @@ import { storeInSuccess, storeInFailure, updateInFailure, updateInSuccess } from
 
 export function* store({ payload }) {
   try {
-    const response = yield call(api.post, 'plans', payload)
+    const response = yield call(api.post, 'students', payload)
     if (response) {
       yield put(storeInSuccess(payload))
       toast.success('Registro salvo!')
-      history.push('/plans')
+      history.push('/dashboard')
     }
   } catch (err) {
     toast.error(err.response.data.error);
@@ -21,14 +21,15 @@ export function* store({ payload }) {
 
 export function* update({ payload }) {
   try {
-    const { title, duration, price } = payload;
-    const response = yield call(api.put, `plans/${payload.id}`, {
-      title, duration, price
+    const { name, age, weight, height } = payload;
+    const response = yield call(api.put, `students/${payload.id}`, {
+      name, age, weight, height
     })
+
     if (response) {
       yield put(updateInSuccess(payload))
       toast.success('Registro salvo!')
-      history.push('/plans')
+      history.push('/dashboard')
     }
   } catch (err) {
     toast.error(err.response.data.error);
@@ -37,6 +38,6 @@ export function* update({ payload }) {
 }
 
 export default all([
-  takeLatest('@plan/STORE_IN_REQUEST', store),
-  takeLatest('@plan/UPDATE_IN_REQUEST', update),
+  takeLatest('@student/STORE_IN_REQUEST', store),
+  takeLatest('@student/UPDATE_IN_REQUEST', update),
 ]);
