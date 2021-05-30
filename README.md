@@ -54,7 +54,7 @@ Faça um clone desse repositório
 
 ## 👨‍💻 Desenvolvido
 
-Armando Arlan Joergensen
+Armando Arlan Joergensen <p></p>
 [![Linkedin Badge](https://img.shields.io/badge/-LinkedIn-blue?style=flat-square&logo=Linkedin&logoColor=white&link=https://www.linkedin.com/in/armandoaaj/)](https://www.linkedin.com/in/armandoaaj/)
 
 ## 📝 Licença
